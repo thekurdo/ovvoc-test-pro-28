@@ -1,0 +1,13 @@
+{
+  "name": "ovvoc-test-pro-28",
+  "version": "1.0.0",
+  "description": "Full SPA with nested React Router v5 routing",
+  "scripts": {
+    "test": "node test/router.test.js"
+  },
+  "dependencies": {
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-router-dom": "5.3.4"
+  }
+}
