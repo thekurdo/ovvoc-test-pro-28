@@ -1,7 +1,7 @@
 import React from 'react';
 import {
-  BrowserRouter, Switch, Route, Redirect, Link, NavLink,
-  useHistory, useParams, useLocation, useRouteMatch, withRouter
+  BrowserRouter, Routes, Route, Navigate, Link, NavLink,
+  useNavigate, useParams, useLocation, useMatch, withRouter
 } from 'react-router-dom';
 
 // withRouter HOC usage (removed in v6)
@@ -22,7 +22,7 @@ class BreadcrumbBase extends React.Component {
 const Breadcrumb = withRouter(BreadcrumbBase);
 
 function Layout({ children }) {
-  const history = useHistory();
+  const history = useNavigate();
   return (
     <div>
       <header>
@@ -42,9 +42,9 @@ function Home() {
   return <div><h1>Welcome</h1></div>;
 }
 
-// Nested routing with useRouteMatch
+// Nested routing with useMatch
 function Dashboard() {
-  const { path, url } = useRouteMatch();
+  const { path, url } = useMatch();
 
   return (
     <div>
@@ -54,14 +54,14 @@ function Dashboard() {
         <Link to={`${url}/analytics`}>Analytics</Link>
         <Link to={`${url}/reports`}>Reports</Link>
       </nav>
-      <Switch>
+      <Routes>
         <Route exact path={path}>
-          <Redirect to={`${path}/overview`} />
+          <Navigate to={`${path}/overview`} />
         </Route>
         <Route path={`${path}/overview`} component={DashboardOverview} />
         <Route path={`${path}/analytics`} component={DashboardAnalytics} />
         <Route path={`${path}/reports`} component={DashboardReports} />
-      </Switch>
+      </Routes>
     </div>
   );
 }
@@ -71,7 +71,7 @@ function DashboardAnalytics() { return <div><h2>Analytics</h2></div>; }
 function DashboardReports() { return <div><h2>Reports</h2></div>; }
 
 function ProjectList() {
-  const history = useHistory();
+  const history = useNavigate();
   const projects = ['alpha', 'beta', 'gamma'];
   return (
     <div>
@@ -87,8 +87,8 @@ function ProjectList() {
 
 function ProjectDetail() {
   const { projectId } = useParams();
-  const { path, url } = useRouteMatch();
-  const history = useHistory();
+  const { path, url } = useMatch();
+  const history = useNavigate();
 
   return (
     <div>
@@ -98,7 +98,7 @@ function ProjectDetail() {
         <Link to={`${url}/files`}>Files</Link>
         <Link to={`${url}/settings`}>Settings</Link>
       </nav>
-      <Switch>
+      <Routes>
         <Route exact path={path}>
           <p>Select a tab</p>
         </Route>
@@ -111,7 +111,7 @@ function ProjectDetail() {
         <Route path={`${path}/settings`}>
           <div><h2>Settings for {projectId}</h2></div>
         </Route>
-      </Switch>
+      </Routes>
       <button onClick={() => history.goBack()}>Back</button>
     </div>
   );
@@ -133,7 +133,7 @@ function TeamMember() {
 }
 
 function Settings() {
-  const history = useHistory();
+  const history = useNavigate();
   const handleSave = () => {
     history.replace('/dashboard', { saved: true });
   };
@@ -154,7 +154,7 @@ function PrivateRoute({ component: Component, isAuth, ...rest }) {
     <Route
       {...rest}
       render={(props) =>
-        isAuth ? <Component {...props} /> : <Redirect to={{ pathname: '/login', state: { from: props.location } }} />
+        isAuth ? <Component {...props} /> : <Navigate to={{ pathname: '/login', state: { from: props.location } }} />
       }
     />
   );
@@ -165,7 +165,7 @@ function App() {
   return (
     <BrowserRouter>
       <Layout>
-        <Switch>
+        <Routes>
           <Route exact path="/" component={Home} />
           <PrivateRoute path="/dashboard" component={Dashboard} isAuth={isAuth} />
           <Route exact path="/projects" component={ProjectList} />
@@ -174,10 +174,10 @@ function App() {
           <Route path="/team/:memberId" component={TeamMember} />
           <PrivateRoute path="/settings" component={Settings} isAuth={isAuth} />
           <Route path="/login" component={Login} />
-          <Redirect from="/home" to="/" />
-          <Redirect from="/old-dashboard" to="/dashboard" />
+          <Navigate from="/home" to="/" />
+          <Navigate from="/old-dashboard" to="/dashboard" />
           <Route component={NotFound} />
-        </Switch>
+        </Routes>
       </Layout>
     </BrowserRouter>
   );

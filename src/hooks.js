@@ -1,4 +1,4 @@
-import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
+import { useNavigate, useLocation, useMatch } from 'react-router-dom';
 import { useCallback, useMemo } from 'react';
 
 export function useQueryParams() {
@@ -7,7 +7,7 @@ export function useQueryParams() {
 }
 
 export function useNavigation() {
-  const history = useHistory();
+  const history = useNavigate();
 
   return {
     navigate: useCallback((path, state) => history.push(path, state), [history]),
@@ -18,7 +18,7 @@ export function useNavigation() {
 }
 
 export function useActiveRoute() {
-  const match = useRouteMatch();
+  const match = useMatch();
   const location = useLocation();
   return { match, location, isExact: match?.isExact };
 }
